@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BrewMate - Kopi Nusantara & AI Barista Assistant</title>
+  <meta name="description"
+    content="Temukan biji kopi Nusantara terbaik dan nikmati konsultasi langsung dengan Barista AI BrewMate." />
+
+  <!-- Google Fonts & Tailwind CSS CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="bg-[#F8F5EF] text-[#30251F] font-sans selection:bg-[#B87945] selection:text-white relative min-h-screen">
+
+  <!-- Navbar -->
+  <nav id="navbar" class="fixed w-full z-40 transition-all duration-300 bg-transparent py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center">
+        <!-- Logo -->
+        <a href="#home" class="flex items-center gap-2 group">
+          <div class="bg-[#3B2418] p-2 rounded-lg group-hover:bg-[#B87945] transition-colors">
+            <i data-lucide="coffee" class="w-5 h-5 text-white"></i>
+          </div>
+          <span class="font-serif text-2xl font-bold text-[#24150F]">BrewMate</span>
+        </a>
+
+        <!-- Desktop Nav -->
+        <div class="hidden md:flex items-center space-x-8">
+          <a href="#home" class="text-[#30251F] hover:text-[#B87945] font-medium transition-colors">Beranda</a>
+          <a href="#collection" class="text-[#30251F] hover:text-[#B87945] font-medium transition-colors">Katalog
+            Kopi</a>
+          <a href="#guide" class="text-[#30251F] hover:text-[#B87945] font-medium transition-colors">Panduan Seduh</a>
+          <a href="#about" class="text-[#30251F] hover:text-[#B87945] font-medium transition-colors">Tentang Kami</a>
+
+          <div class="flex items-center gap-4 border-l border-[#EDE4D8] pl-8">
+            <button id="cart-btn" class="relative p-2 text-[#24150F] hover:text-[#B87945] transition-colors group"
+              title="Keranjang">
+              <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+              <span id="cart-count"
+                class="hidden absolute top-0 right-0 bg-[#B87945] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center transform translate-x-1 -translate-y-1 group-hover:scale-110 transition-transform">
+                0
+              </span>
+            </button>
+
+            <button id="nav-open-chat-btn"
+              class="bg-[#24150F] text-white px-6 py-2.5 rounded-full hover:bg-[#B87945] transition-colors font-medium flex items-center gap-2 shadow-sm">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <span>Tanya Barista</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <div class="md:hidden flex items-center gap-4">
+          <button id="mobile-cart-btn" class="relative p-2 text-[#24150F]">
+            <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+            <span id="mobile-cart-count"
+              class="hidden absolute top-0 right-0 bg-[#B87945] text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center transform translate-x-1 -translate-y-1">
+              0
+            </span>
+          </button>
+          <button id="mobile-menu-toggle" class="text-[#24150F] p-1">
+            <i data-lucide="menu" id="menu-icon" class="w-6 h-6"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Nav Drawer -->
+    <div id="mobile-menu"
+      class="hidden md:hidden absolute top-full left-0 w-full bg-[#F8F5EF] shadow-lg border-t border-[#EDE4D8]">
+      <div class="px-4 pt-2 pb-6 space-y-1">
+        <a href="#home"
+          class="mobile-nav-link block px-3 py-4 text-base font-medium text-[#30251F] hover:bg-[#EDE4D8] rounded-md">Beranda</a>
+        <a href="#collection"
+          class="mobile-nav-link block px-3 py-4 text-base font-medium text-[#30251F] hover:bg-[#EDE4D8] rounded-md">Katalog
+          Kopi</a>
+        <a href="#guide"
+          class="mobile-nav-link block px-3 py-4 text-base font-medium text-[#30251F] hover:bg-[#EDE4D8] rounded-md">Panduan
+          Seduh</a>
+        <a href="#about"
+          class="mobile-nav-link block px-3 py-4 text-base font-medium text-[#30251F] hover:bg-[#EDE4D8] rounded-md">Tentang
+          Kami</a>
+        <button id="mobile-open-chat-btn"
+          class="w-full mt-4 bg-[#24150F] text-white px-4 py-3 rounded-md hover:bg-[#B87945] transition-colors font-medium flex justify-center items-center gap-2">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          Cari Kopimu
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Global Toast Notification -->
+  <div id="cart-toast"
+    class="fixed top-24 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-0 -translate-y-4 pointer-events-none">
+    <div
+      class="bg-[#24150F] text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 border border-[#3B2418]">
+      <i data-lucide="check-circle-2" class="w-5 h-5 text-[#B87945]"></i>
+      <span id="cart-toast-text" class="font-medium text-sm">Produk ditambahkan ke keranjang!</span>
+    </div>
+  </div>
+
+  <main>
+    <!-- Hero Section -->
+    <section id="home" class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-[#F8F5EF]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+
+          <!-- Text Content -->
+          <div class="max-w-2xl">
+            <div
+              class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EDE4D8] text-[#3B2418] text-sm font-medium mb-6">
+              <i data-lucide="sparkles" class="w-4 h-4 text-[#B87945]"></i>
+              <span>Kopi Nusantara · Cerahkan Pagimu</span>
+            </div>
+            <h1 class="text-5xl lg:text-7xl font-serif font-bold text-[#24150F] leading-tight mb-6">
+              Kopi Sempurna, <br class="hidden lg:block" /> Khusus Untukmu.
+            </h1>
+            <p class="text-lg text-[#30251F] mb-10 leading-relaxed max-w-lg">
+              Setiap biji kopi Nusantara memiliki cerita. Temukan profil rasa, aroma, dan gaya seduh yang paling pas
+              dengan seleramu bersama AI Assistant kami.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4">
+              <a href="#collection"
+                class="bg-[#3B2418] text-white px-8 py-4 rounded-full hover:bg-[#24150F] transition-all text-center font-medium text-lg shadow-md">
+                Eksplorasi Katalog
+              </a>
+              <button id="hero-open-chat-btn"
+                class="bg-transparent border-2 border-[#3B2418] text-[#3B2418] px-8 py-4 rounded-full hover:bg-[#3B2418] hover:text-white transition-all flex items-center justify-center gap-2 font-medium text-lg">
+                <i data-lucide="bot" class="w-5 h-5"></i>
+                Tanya Barista AI
+              </button>
+            </div>
+          </div>
+
+          <!-- Image / Visual -->
+          <div class="relative">
+            <div class="aspect-[4/5] rounded-3xl overflow-hidden relative shadow-2xl">
+              <img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=1000&auto=format&fit=crop"
+                alt="Menyeduh kopi manual" class="object-cover w-full h-full" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+
+              <!-- Floating Badge -->
+              <div
+                class="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-sm p-4 rounded-2xl flex items-center gap-4 shadow-lg">
+                <div class="bg-[#B87945] p-3 rounded-full">
+                  <i data-lucide="coffee" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                  <p class="text-xs font-bold text-[#3B2418] tracking-wider uppercase mb-1">Cita Rasa Asli</p>
+                  <p class="font-serif text-[#24150F] font-medium">Biji Kopi Pilihan dari Seluruh Indonesia.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Decorative Blobs -->
+            <div
+              class="absolute -top-10 -right-10 w-40 h-40 bg-[#EDE4D8] rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob pointer-events-none">
+            </div>
+            <div
+              class="absolute -bottom-10 -left-10 w-40 h-40 bg-[#B87945] rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000 pointer-events-none">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Coffee Collection Section -->
+    <section id="collection" class="py-24 bg-[#F8F5EF]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+          <h2 class="text-4xl font-serif font-bold text-[#24150F] mb-4">Katalog Kopi Nusantara</h2>
+          <p class="text-lg text-[#30251F]">
+            Jelajahi koleksi biji kopi premium kami yang di-roasting dengan presisi. Siap dikirim langsung ke pintu
+            rumahmu.
+          </p>
+        </div>
+
+        <!-- Coffee Grid -->
+        <div id="coffee-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <!-- Dynamically populated via script.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Coffee Finder Section -->
+    <section id="finder" class="py-24 bg-[#EDE4D8]">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-3xl p-8 md:p-12 shadow-xl relative overflow-hidden">
+
+          <div class="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
+            <i data-lucide="coffee" class="w-64 h-64 text-[#3B2418]"></i>
+          </div>
+
+          <div class="relative z-10">
+            <div class="text-center mb-10">
+              <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#24150F] mb-4">Bingung Pilih Kopi Apa?</h2>
+              <p class="text-lg text-[#30251F]">Beritahu selera favoritmu, biar sistem kami yang mencarikan jodoh
+                kopimu.</p>
+            </div>
+
+            <!-- Finder Step 1: Questions -->
+            <div id="finder-step-1" class="space-y-8">
+              <!-- Flavor Preference -->
+              <div>
+                <label class="block font-serif text-xl text-[#24150F] mb-4">Profil rasa apa yang kamu suka?</label>
+                <div class="flex flex-wrap gap-3" id="flavor-options">
+                  <!-- Rendered via JS -->
+                </div>
+              </div>
+
+              <!-- Strength Preference -->
+              <div>
+                <label class="block font-serif text-xl text-[#24150F] mb-4">Seberapa pekat/kuat kopimu?</label>
+                <div class="flex flex-wrap gap-3" id="strength-options">
+                  <!-- Rendered via JS -->
+                </div>
+              </div>
+
+              <!-- Method Preference -->
+              <div>
+                <label class="block font-serif text-xl text-[#24150F] mb-4">Metode seduh favoritmu?</label>
+                <div class="flex flex-wrap gap-3" id="method-options">
+                  <!-- Rendered via JS -->
+                </div>
+              </div>
+
+              <div class="pt-6 border-t border-[#E5D5C1] flex justify-center">
+                <button id="finder-submit-btn" disabled
+                  class="bg-[#B87945] text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-[#a66a39] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-md">
+                  <span>Cari Kopi Sempurnaku</span>
+                  <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Finder Step 2: Result -->
+            <div id="finder-step-2" class="hidden text-center animate-fade-in">
+              <p class="text-[#B87945] font-bold tracking-widest uppercase text-sm mb-4">Kami menemukan jodoh kopimu</p>
+              <h3 id="recommendation-name" class="text-4xl font-serif font-bold text-[#24150F] mb-6">-</h3>
+
+              <div class="max-w-md mx-auto mb-8 bg-[#F8F5EF] p-6 rounded-2xl border border-[#EDE4D8]">
+                <p id="recommendation-desc" class="text-[#30251F] italic mb-4">"-"</p>
+                <div class="flex justify-center gap-4 text-sm font-medium">
+                  <span id="recommendation-flavor"
+                    class="bg-white px-3 py-1 rounded-full text-[#3B2418] shadow-sm">Flavor</span>
+                  <span id="recommendation-intensity"
+                    class="bg-white px-3 py-1 rounded-full text-[#3B2418] shadow-sm">Intensity</span>
+                </div>
+              </div>
+
+              <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button id="finder-reset-btn"
+                  class="px-6 py-3 rounded-full border-2 border-[#3B2418] text-[#3B2418] font-medium hover:bg-[#3B2418]/5 transition-colors">
+                  Coba Lagi
+                </button>
+                <button id="finder-chat-btn"
+                  class="px-6 py-3 rounded-full bg-[#24150F] text-white font-medium hover:bg-[#3B2418] transition-colors flex items-center justify-center gap-2 shadow-sm">
+                  <i data-lucide="bot" class="w-5 h-5"></i>
+                  <span>Tanya AI Lebih Lanjut</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Brewing Guide Section -->
+    <section id="guide" class="py-24 bg-[#F8F5EF]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+          <h2 class="text-4xl font-serif font-bold text-[#24150F] mb-4">Panduan Seduh Ala Kafe</h2>
+          <p class="text-lg text-[#30251F]">
+            Kuasai metode dasar dengan panduan sederhana kami. Karena rasa kopi terbaik adalah yang paling kamu nikmati.
+          </p>
+        </div>
+
+        <div id="brewing-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Dynamically populated via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Brewing Guide Modal -->
+    <div id="guide-modal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
+      <div class="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative animate-fade-in-up">
+        <button id="guide-modal-close"
+          class="absolute top-4 right-4 p-2 bg-white/80 backdrop-blur-sm rounded-full text-[#30251F] hover:bg-[#F8F5EF] transition-colors z-10">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+
+        <div class="h-64 sm:h-80 w-full relative">
+          <img id="guide-modal-img" src="" alt="Brewing guide" class="w-full h-full object-cover" />
+        </div>
+
+        <div class="p-8 sm:p-12">
+          <h3 id="guide-modal-title" class="font-serif text-3xl font-bold text-[#24150F] mb-2">Panduan</h3>
+          <p id="guide-modal-ratio" class="text-[#B87945] font-medium mb-8">Rasio: -</p>
+
+          <div class="space-y-6">
+            <h4 class="font-serif text-xl font-semibold text-[#24150F]">Langkah-langkah</h4>
+            <ol id="guide-modal-steps" class="space-y-4">
+              <!-- Rendered via JS -->
+            </ol>
+
+            <div class="mt-8 p-4 bg-[#F8F5EF] border-l-4 border-[#B87945] rounded-r-lg">
+              <p class="text-sm text-[#3B2418]"><strong class="font-semibold">Pro Tip:</strong> <span
+                  id="guide-modal-tip"></span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- About Section -->
+    <section id="about" class="py-24 bg-[#24150F] text-[#F8F5EF]">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-2 gap-16 items-center">
+          <div class="order-2 lg:order-1 relative">
+            <img src="https://images.unsplash.com/photo-1611162458324-aae1eb4129a4?q=80&w=800&auto=format&fit=crop"
+              alt="Proses roasting biji kopi" class="rounded-2xl shadow-xl w-full object-cover aspect-square" />
+          </div>
+          <div class="order-1 lg:order-2">
+            <h2 class="text-4xl lg:text-5xl font-serif font-bold mb-6 text-white">Lebih Dari Sekadar Minuman.</h2>
+            <p class="text-[#EDE4D8] text-lg leading-relaxed mb-10">
+              Di BrewMate, kami percaya kopi yang nikmat berawal dari rasa ingin tahu. Indonesia memiliki kekayaan biji
+              kopi yang luar biasa. Baik kamu pencinta Kopi Tubruk yang pekat atau V60 yang ringan, kami hadir untuk
+              membantumu menemukan kopi Nusantara terbaikmu.
+            </p>
+
+            <div class="space-y-6">
+              <div class="flex gap-4">
+                <div class="mt-1">
+                  <i data-lucide="check-circle-2" class="w-6 h-6 text-[#B87945]"></i>
+                </div>
+                <div>
+                  <h4 class="text-xl font-serif font-semibold text-white mb-1">Kualitas di Setiap Cangkir</h4>
+                  <p class="text-[#EDE4D8]">Didatangkan langsung dari petani kopi terbaik di berbagai pulau di
+                    Indonesia.</p>
+                </div>
+              </div>
+
+              <div class="flex gap-4">
+                <div class="mt-1">
+                  <i data-lucide="check-circle-2" class="w-6 h-6 text-[#B87945]"></i>
+                </div>
+                <div>
+                  <h4 class="text-xl font-serif font-semibold text-white mb-1">Temukan Seleramu</h4>
+                  <p class="text-[#EDE4D8]">Rekomendasi presisi menggunakan AI Barista yang disesuaikan dengan selera
+                    personalmu.</p>
+                </div>
+              </div>
+
+              <div class="flex gap-4">
+                <div class="mt-1">
+                  <i data-lucide="check-circle-2" class="w-6 h-6 text-[#B87945]"></i>
+                </div>
+                <div>
+                  <h4 class="text-xl font-serif font-semibold text-white mb-1">Diseduh untuk Setiap Momen</h4>
+                  <p class="text-[#EDE4D8]">Biji kopi dan metode seduh yang siap menemani ritual harianmu.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="py-24 bg-[#3B2418] text-white">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-4xl font-serif font-bold mb-4">Kopi Favoritmu Menanti.</h2>
+        <p class="text-[#EDE4D8] text-lg mb-8 max-w-2xl mx-auto">
+          Eksplorasi rasa baru, dapatkan diskon eksklusif 10% untuk pemesanan pertamamu, dan pelajari tips seduh dari
+          ahli. Gabung BrewMate Club sekarang.
+        </p>
+
+        <div id="newsletter-success"
+          class="hidden bg-[#24150F] p-6 rounded-2xl inline-flex items-center justify-center gap-3 text-[#B87945] font-medium border border-[#B87945]/30 animate-fade-in">
+          <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+          <span>Selamat datang di klub! Cek kotak masukmu sebentar lagi untuk voucher diskon.</span>
+        </div>
+
+        <form id="newsletter-form" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+          <input type="email" id="newsletter-email" required placeholder="Masukkan alamat email..."
+            class="flex-1 bg-white/10 text-white px-6 py-4 rounded-full focus:outline-none focus:ring-2 focus:ring-[#B87945] placeholder-gray-400 border border-white/20" />
+          <button type="submit"
+            class="bg-[#B87945] px-8 py-4 rounded-full hover:bg-[#a66a39] transition-colors font-bold whitespace-nowrap shadow-md">
+            Daftar Sekarang
+          </button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-[#24150F] text-[#F8F5EF] py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+        <div class="col-span-1 md:col-span-1">
+          <div class="flex items-center gap-2 mb-4">
+            <i data-lucide="coffee" class="w-6 h-6 text-[#B87945]"></i>
+            <span class="font-serif text-2xl font-bold">BrewMate</span>
+          </div>
+          <p class="text-[#EDE4D8] text-sm leading-relaxed">
+            Membawa kopi Nusantara terbaik langsung ke cangkirmu. Kopi berkualitas, disesuaikan dengan seleramu.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="font-serif text-lg mb-4 text-white">Tautan Cepat</h4>
+          <ul class="space-y-2 text-[#EDE4D8] text-sm">
+            <li><a href="#home" class="hover:text-[#B87945] transition-colors">Beranda</a></li>
+            <li><a href="#about" class="hover:text-[#B87945] transition-colors">Tentang Kami</a></li>
+            <li><a href="#collection" class="hover:text-[#B87945] transition-colors">Katalog Kopi</a></li>
+            <li><a href="#guide" class="hover:text-[#B87945] transition-colors">Panduan Seduh</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-serif text-lg mb-4 text-white">Fitur</h4>
+          <ul class="space-y-2 text-[#EDE4D8] text-sm">
+            <li>
+              <button id="footer-chat-btn" class="hover:text-[#B87945] transition-colors flex items-center gap-2">
+                <i data-lucide="bot" class="w-4 h-4"></i>
+                <span>Barista AI</span>
+              </button>
+            </li>
+            <li><a href="#finder" class="hover:text-[#B87945] transition-colors">Pencari Kopi</a></li>
+            <li><a href="#collection" class="hover:text-[#B87945] transition-colors">Katalog Kopi</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-serif text-lg mb-4 text-white">Jangan Ketinggalan</h4>
+          <p class="text-[#EDE4D8] text-sm mb-4">Daftar newsletter untuk tips seduh & promo biji kopi terbaru.</p>
+          <div class="flex">
+            <input type="email" placeholder="Email kamu"
+              class="bg-[#3B2418] text-white px-4 py-2 rounded-l-md w-full focus:outline-none focus:ring-1 focus:ring-[#B87945] placeholder-gray-400 border-none text-sm" />
+            <button class="bg-[#B87945] px-4 py-2 rounded-r-md hover:bg-[#a66a39] transition-colors">
+              <i data-lucide="arrow-right" class="w-5 h-5 text-white"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-16 pt-8 border-t border-[#3B2418] text-center text-[#EDE4D8] text-sm">
+        <p>&copy; 2026 BrewMate Indonesia. AI Barista Powered by Gemini.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating Chatbot Widget Button -->
+  <button id="chat-toggle-btn"
+    class="fixed bottom-6 right-6 lg:bottom-10 lg:right-10 z-50 bg-[#24150F] text-white p-4 rounded-full shadow-2xl hover:bg-[#3B2418] hover:scale-110 transition-all duration-300 group flex items-center justify-center"
+    title="Buka Barista AI">
+    <div
+      class="absolute -top-3 -right-2 bg-[#B87945] text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-md whitespace-nowrap">
+      Barista AI
+    </div>
+    <i data-lucide="message-circle" class="w-7 h-7"></i>
+  </button>
+
+  <!-- Chat Window Modal / Drawer -->
+  <div id="chat-window"
+    class="fixed bottom-0 right-0 sm:bottom-6 sm:right-6 lg:bottom-10 lg:right-10 z-50 w-full sm:w-[400px] h-[100dvh] sm:h-[600px] bg-white sm:rounded-2xl shadow-2xl flex flex-col transition-all duration-300 ease-out origin-bottom-right border border-gray-100 scale-0 opacity-0 pointer-events-none">
+    <!-- Chat Header -->
+    <div class="bg-[#24150F] p-4 sm:rounded-t-2xl flex justify-between items-center text-white shrink-0 shadow-md">
+      <div class="flex items-center gap-3">
+        <div class="bg-[#3B2418] p-2 rounded-full relative">
+          <i data-lucide="bot" class="w-5 h-5"></i>
+          <span
+            class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-[#3B2418] rounded-full"></span>
+        </div>
+        <div>
+          <h4 class="font-serif font-bold leading-tight">Barista AI</h4>
+          <p class="text-xs text-[#EDE4D8]">Siap membantu</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-1">
+        <button id="chat-clear-btn"
+          class="p-2 hover:bg-[#3B2418] rounded-full transition-colors text-[#EDE4D8] hover:text-white"
+          title="Bersihkan Obrolan">
+          <i data-lucide="trash-2" class="w-4 h-4"></i>
+        </button>
+        <button id="chat-close-btn"
+          class="p-2 hover:bg-[#3B2418] rounded-full transition-colors text-[#EDE4D8] hover:text-white"
+          title="Tutup Chat">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Chat Messages Container -->
+    <div id="chat-messages" class="flex-1 overflow-y-auto p-4 bg-[#F8F5EF] space-y-4">
+      <!-- Messages rendered dynamically -->
+    </div>
+
+    <!-- Chat Typing Indicator -->
+    <div id="chat-typing" class="hidden px-4 pb-2 bg-[#F8F5EF]">
+      <div class="flex justify-start">
+        <div
+          class="bg-white text-[#30251F] shadow-sm rounded-2xl rounded-tl-sm px-4 py-3 border border-[#EDE4D8] flex gap-1 items-center">
+          <span class="w-2 h-2 bg-[#B87945] rounded-full animate-bounce"></span>
+          <span class="w-2 h-2 bg-[#B87945] rounded-full animate-bounce" style="animation-delay: 0.15s"></span>
+          <span class="w-2 h-2 bg-[#B87945] rounded-full animate-bounce" style="animation-delay: 0.3s"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Input Section -->
+    <div class="p-4 bg-white border-t border-gray-100 sm:rounded-b-2xl shrink-0">
+      <!-- Suggested Prompts -->
+      <div id="chat-suggestions" class="flex overflow-x-auto gap-2 pb-3 no-scrollbar mb-2">
+        <!-- Rendered via JS -->
+      </div>
+
+      <!-- Text input & Send button -->
+      <form id="chat-form" class="relative flex items-center">
+        <textarea id="chat-input" placeholder="Tanya apapun seputar kopi..." rows="1"
+          class="w-full bg-[#F8F5EF] border-none rounded-xl pl-4 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#B87945] resize-none overflow-hidden placeholder-gray-400"
+          style="min-height: 44px; max-height: 120px;"></textarea>
+        <button type="submit" id="chat-send-btn" disabled
+          class="absolute right-2 p-2 bg-[#3B2418] text-white rounded-lg hover:bg-[#B87945] disabled:opacity-50 disabled:hover:bg-[#3B2418] transition-colors cursor-pointer">
+          <i data-lucide="send" class="w-4 h-4"></i>
+        </button>
+      </form>
+      <div class="text-[10px] text-center text-gray-400 mt-2">
+        BrewMate AI terhubung langsung ke backend Gemini.
+      </div>
+    </div>
+  </div>
+
+  <!-- Vanilla JavaScript Logic -->
+  <script src="script.js"></script>
+</body>
+
+</html>
